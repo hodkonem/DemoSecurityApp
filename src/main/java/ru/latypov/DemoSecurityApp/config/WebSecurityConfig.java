@@ -3,21 +3,23 @@ package ru.latypov.DemoSecurityApp.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import ru.latypov.DemoSecurityApp.services.PersonDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final AuthProviderImpl authProvider;
+    private final PersonDetailsService personDetailsService;
 
     @Autowired
-    public WebSecurityConfig(AuthenticationProvider customAuthProvider, AuthProviderImpl authProvider) {
-        this.authProvider = authProvider;
+    public WebSecurityConfig(PersonDetailsService personDetailsService) {
+        this.personDetailsService = personDetailsService;
     }
 
     @Bean
@@ -28,9 +30,13 @@ public class WebSecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .formLogin(Customizer.withDefaults())
-                .authenticationProvider(authProvider);
+                .userDetailsService(personDetailsService);
 
         return httpSecurity.build();
+    }
 
+    @Bean
+    PasswordEncoder getPasswordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
     }
 }
