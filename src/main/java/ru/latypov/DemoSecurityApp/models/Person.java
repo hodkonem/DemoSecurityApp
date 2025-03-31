@@ -24,7 +24,8 @@ public class Person {
     @Column(name = "password")
     private String password;
 
-    public Person() {}
+    public Person() {
+    }
 
     public Person(String username, int yearOfBirth) {
         this.username = username;
