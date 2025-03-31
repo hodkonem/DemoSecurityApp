@@ -3,9 +3,9 @@ package ru.latypov.DemoSecurityApp.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,12 +24,18 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/public/**")
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login", "/error")
                         .permitAll()
                         .anyRequest()
-                        .authenticated())
-                .formLogin(Customizer.withDefaults())
+                        .authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/auth/login")
+                        .loginProcessingUrl("/process_login")
+                        .defaultSuccessUrl("/hello", true)
+                        .failureUrl("/auth/login?error")
+                )
                 .userDetailsService(personDetailsService);
 
         return httpSecurity.build();
