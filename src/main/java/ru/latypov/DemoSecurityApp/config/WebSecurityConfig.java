@@ -36,6 +36,8 @@ public class WebSecurityConfig {
                         .defaultSuccessUrl("/hello", true)
                         .failureUrl("/auth/login?error")
                 )
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/auth/login")
+                )
                 .userDetailsService(personDetailsService);
 
         return httpSecurity.build();
