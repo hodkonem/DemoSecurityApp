@@ -24,10 +24,11 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/admin").hasRole("ADMIN")
+                )
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login", "/auth/registration", "/error")
                         .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                        .anyRequest().hasAnyRole("USER", "ADMIN")
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")

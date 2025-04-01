@@ -1,11 +1,12 @@
 package ru.latypov.DemoSecurityApp.security;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.latypov.DemoSecurityApp.models.Person;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
 /**
  * Этот класс является оберткой над нашей сущностью Person
@@ -15,7 +16,7 @@ public record PersonDetails(Person person) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return Collections.singletonList(new SimpleGrantedAuthority(person.getRole()));
     }
 
     @Override
